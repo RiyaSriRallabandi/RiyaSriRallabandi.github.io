@@ -4,11 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canvas Copilot | Riya Sri Rallabandi</title>
+<meta name="description" content="Canvas Copilot: a local assistant that answers Canvas course questions using a small on-device model, a read-only Canvas client and code-side guardrails.">
 <meta name="theme-color" content="#0a0d12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../assets/style.css">
+<!-- Small extra styles for this page only (results strip, tables, demo). Safe to move into style.css later. -->
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 18px 18px 16px; min-width: 0; }
+  .stat .num { display: block; font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; color: var(--signal); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat .cap { display: block; margin-top: 6px; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+  .intro-p { margin: 0 0 24px; max-width: 44em; color: var(--muted); }
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+  td.k { font-family: var(--font-mono); font-size: 13.5px; color: var(--accent); white-space: nowrap; }
+  td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--signal); white-space: nowrap; }
+  td.d { color: var(--muted); }
+  .sub { margin: 36px 0 4px; font-size: 1.1rem; font-weight: 600; }
+  .prose ul { margin: 0 0 18px; padding-left: 1.2em; max-width: 40em; }
+  .prose li { margin-bottom: 8px; }
+  .media { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .media video { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; object-fit: contain; }
+  .media .media-note { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  [hidden] { display: none !important; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  figure { margin: 0; min-width: 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .industry { margin: 0 0 20px; font-family: var(--font-mono); font-size: 13px; color: var(--signal); letter-spacing: 0.04em; }
+  /* Section names are the headline, the line under them is a quieter subtitle */
+  section .label { font-family: var(--font-body); font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight: 600; letter-spacing: -0.015em; text-transform: none; color: var(--accent); line-height: 1.2; margin: 0 0 10px; }
+  section h2 { font-size: clamp(1.05rem, 2vw, 1.25rem); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-bottom: 24px; }
+  .two-col h2 { margin-bottom: 0; }
+  .outline li { line-height: 1.55; }
+  .outline li b { margin-bottom: 2px; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+</style>
+
 </head>
 <body>
 <header class="bar">
@@ -23,27 +60,280 @@
   </div>
 </header>
 <main>
+
+  <!-- ================= TITLE ================= -->
   <div class="wrap hero">
     <p class="crumb"><a href="../projects.html">Projects</a> / canvas-copilot</p>
     <p class="eyebrow">Local LLM · Agent · Hybrid search</p>
     <h1>Canvas Copilot</h1>
-    <div class="draft">PAGE NOT WRITTEN YET. We will fill this in together, one section at a time.</div>
+    <p class="industry">Industry: EdTech</p>
+    <p class="lede">A local assistant that answers a student's Canvas questions, like what is due this week or how a class is graded. It runs a small model on the student's own laptop and only reads from Canvas. I built it to solve a problem I see every day, and to learn how to make a small model reliable.</p>
+    <div class="links">
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/canvas-copilot" target="_blank" rel="noopener">GitHub Repo</a>
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/canvas-copilot/blob/main/docs/decisions.md" target="_blank" rel="noopener">Design decisions</a>
+    </div>
   </div>
+
+  <!-- ================= RESULTS AT A GLANCE ================= -->
+  <section style="border-top:0; padding-top:0">
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><span class="num">1.0</span><span class="cap">score on all 17 test conversations, up from 0.80</span></div>
+        <div class="stat"><span class="num">3B</span><span class="cap">model size, a 1.9 GB download that runs on a laptop</span></div>
+        <div class="stat"><span class="num">0 writes</span><span class="cap">to Canvas. Every call is read only</span></div>
+        <div class="stat"><span class="num">$0</span><span class="cap">cost, with no questions or grades sent to an AI provider</span></div>
+      </div>
+      <p class="note">Measured on 17 test conversations that use sample Canvas data. I fixed problems that these same tests exposed, so the score shows the fixes work. It does not promise the same result on new questions.</p>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEM ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">Problem</p>
+        <h2>Simple questions take too many clicks</h2>
+      </div>
+      <div class="prose">
+        <p>As a student, I often need a quick fact from Canvas. What is due this week? How is this class graded? When is the midterm? Each answer sits on a different page, and I have to click through several to find it.</p>
+        <p>I wanted to ask in plain words and get a direct answer with a link to the right Canvas page. I set these requirements:</p>
+        <ul>
+          <li>Answer course logistics: assignments, due dates, points, submission status, exams, the grading breakdown, late policy and office hours.</li>
+          <li>Never do graded work for the student. This is a navigation tool, not an academic one.</li>
+          <li>Only read from Canvas. It must never change anything.</li>
+          <li>Ask which course I mean when it is unclear, instead of guessing.</li>
+          <li>Keep it private by running the model on the student's own machine.</li>
+        </ul>
+        <p>That last requirement is what makes this project hard. A small model that fits on a laptop makes mistakes that a large hosted model usually avoids, so I had to find those mistakes and design around them.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPROACH AND ARCHITECTURE ================= -->
   <section>
     <div class="wrap">
-      <p class="label">Planned sections</p>
+      <p class="label">Approach and architecture</p>
+      <h2>Use the small model for language, and plain code for everything fragile</h2>
+      <p class="intro-p">The agent is a LangGraph state machine with only one step that calls the model. The model chooses which tool to use and writes the final sentence. Plain Python code decides which course the student means, which dates to search, and when to refuse. I put those jobs in code because they are the exact things a small model gets wrong.</p>
+      <svg viewBox="0 0 620 350" role="img" aria-label="Question is screened, then the agent and tool steps repeat up to four times, then an answer with a link is returned" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-width:680px;display:block;margin:0 auto">
+<rect x="0.5" y="0.5" width="559" height="49" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="23" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">Input</text>
+<text x="16" y="43" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">A student's question, such as "What's due this week?"</text>
+<path d="M280.0 53 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="70.5" width="559" height="49" rx="6" fill="#151b24" stroke="#5ec8d8"/>
+<text x="16" y="93" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">1  Screen (plain code)</text>
+<text x="16" y="113" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Refuses requests to do graded work, before the model sees them.</text>
+<path d="M280.0 123 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="140.5" width="559" height="49" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="163" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">2  Agent (LLM)</text>
+<text x="16" y="183" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">A small local model. Picks a tool, or writes the final answer.</text>
+<path d="M280.0 193 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="210.5" width="559" height="69" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="233" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">3  Run tools (plain code)</text>
+<text x="16" y="253" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Fixes the course and the date range, then reads from Canvas (read only).</text>
+<text x="16" y="273" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Course unclear? Pause and ask the student to pick from a list.</text>
+<path d="M280.0 283 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="300.5" width="559" height="49" rx="6" fill="#1b3a42" stroke="#5ec8d8"/>
+<text x="16" y="323" fill="#d9e0ea" font-family="JetBrains Mono, monospace" font-size="14">Output</text>
+<text x="16" y="343" fill="#d9e0ea" font-family="IBM Plex Sans, sans-serif" font-size="13.5">A short answer with a link to the Canvas page</text>
+<path d="M560 234 h34 V164 h-30 m6 -5 l-6 5 l6 5" fill="none" stroke="#e8b86a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text transform="translate(610,199.0) rotate(90)" text-anchor="middle" fill="#e8b86a" font-family="JetBrains Mono, monospace" font-size="11.5">up to 4 tool turns</text>
+</svg>
+      <p class="note" style="text-align:center">The agent stops after 4 tool turns per question and answers with what it has. The count resets for each new question.</p>
+      <p class="intro-p" style="margin-top:28px">For questions about policies, such as the late policy or office hours, the agent also searches the course content: the syllabus, pages and announcements. The search combines keyword matching with embeddings, and it leans toward keywords. If a course only posts its syllabus as a link to an outside document, the agent gives the link and does not guess an answer.</p>
+      <p class="intro-p">I built it in stages. First I compared models. Then I found where the small model failed and moved each problem into code. After each change I re-ran a set of test conversations to check that nothing broke.</p>
+    </div>
+  </section>
+
+  <!-- ================= TOOLS AND METHODS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Tools and methods</p>
+      <h2>What I used and why</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Piece</th><th>What I used</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Agent loop</td><td>LangGraph</td><td class="d">An explicit state machine, so I control each step and can pause to ask which course the student means.</td></tr>
+            <tr><td class="k">Model</td><td>qwen2.5:3b, run with Ollama</td><td class="d">It won my model comparison on tool calling, and it is small enough to run on a laptop.</td></tr>
+            <tr><td class="k">Agent tools</td><td>list_courses, resolve_course, course_assignments, course_content, get_todo, get_upcoming_events</td><td class="d">These cover the questions students ask most. The model never handles course IDs.</td></tr>
+            <tr><td class="k">Search</td><td>SQLite FTS5 (keywords), sqlite-vec with nomic-embed-text (meaning)</td><td class="d">Everything lives in one local file, with no server and no cost.</td></tr>
+            <tr><td class="k">Canvas access</td><td>httpx, GET requests only</td><td class="d">A thin wrapper makes the read-only promise a single check in one place.</td></tr>
+            <tr><td class="k">Course matching</td><td>rapidfuzz</td><td class="d">It handles nicknames and partial names, like "ML class".</td></tr>
+            <tr><td class="k">Reading content</td><td>html2text, pypdf, langchain-text-splitters</td><td class="d">They turn Canvas pages and PDFs into small searchable chunks.</td></tr>
+            <tr><td class="k">Interface</td><td>FastAPI and one web page, plus a command line</td><td class="d">A local web chat with buttons for picking a course, without needing a packaged app.</td></tr>
+            <tr><td class="k">Secrets</td><td>The operating system keychain</td><td class="d">The Canvas token is never written to a file.</td></tr>
+            <tr><td class="k">Quality checks</td><td>pytest, ruff, pyright, GitHub Actions, make eval</td><td class="d">Tests run on every push, and the conversation tests run on demand.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEMO ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Demo</p>
+      <h2>Watching it work</h2>
+      <!-- Screenshots: download home.png and chat.png from docs/img in the repo (use "Download raw file")
+           and save them in assets/img/canvas-copilot/. A missing image hides its own figure. -->
+      <div class="shots">
+        <figure>
+          <a href="../assets/img/canvas-copilot/home.png" target="_blank" rel="noopener"><img src="../assets/img/canvas-copilot/home.png" alt="Canvas Copilot home screen with suggested questions about due dates, grading, exams and class times" loading="lazy" onerror="this.closest('figure').hidden = true"></a>
+          <figcaption>Home screen, with suggested questions to start from.</figcaption>
+        </figure>
+        <figure>
+          <a href="../assets/img/canvas-copilot/chat.png" target="_blank" rel="noopener"><img src="../assets/img/canvas-copilot/chat.png" alt="Canvas Copilot chat answering what is due this week, a grading breakdown and a midterm question, with links to Canvas pages" loading="lazy" onerror="this.closest('figure').hidden = true"></a>
+          <figcaption>Chat: it lists what is due this week with links to each Canvas page, then answers a grading question using the syllabus text.</figcaption>
+        </figure>
+      </div>
+      <p class="note">Both screenshots use sample student data.</p>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Results</p>
+      <h2>What the measurements showed</h2>
+
+      <p class="sub" style="margin-top:0">Choosing the model</p>
+      <p class="intro-p">First I gave each model a question plus the tool list, and checked whether its first tool call was right. There were 12 cases, each run 3 times.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Metric</th><th>qwen2.5:3b</th><th>llama3.2:3b</th></tr></thead>
+          <tbody>
+            <tr><td>Right tool and arguments</td><td class="n">1.0</td><td class="n">0.70</td></tr>
+            <tr><td>Refusing graded work</td><td class="n">1.0</td><td class="n">0.0</td></tr>
+            <tr><td>Median response time</td><td class="n">1.6 s</td><td class="n">1.9 s</td></tr>
+            <tr><td>Download size</td><td class="n">1.9 GB</td><td class="n">2.0 GB</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">llama3.2:3b never looked up the course first when a student named one, and it did not hold the refusal when a request was reworded.</p>
+
+      <p class="sub">Would a bigger model fix it?</p>
+      <p class="intro-p">Next I ran 17 full test conversations through the real agent, using sample Canvas data. I compared the 3B model with a 7B model before I made any fixes.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Metric</th><th>qwen2.5:3b</th><th>qwen2.5:7b</th></tr></thead>
+          <tbody>
+            <tr><td>Overall</td><td class="n">0.80</td><td class="n">0.80</td></tr>
+            <tr><td>Calling tools in the right order</td><td class="n">0.70</td><td class="n">0.70</td></tr>
+            <tr><td>Answer structure</td><td class="n">0.55</td><td class="n">0.65</td></tr>
+            <tr><td>Refusals</td><td class="n">1.0</td><td class="n">1.0</td></tr>
+            <tr><td>Time per conversation</td><td class="n">7 s</td><td class="n">15 s</td></tr>
+            <tr><td>Download size</td><td class="n">1.9 GB</td><td class="n">4.7 GB</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The 7B model fixed some conversations and broke others. It cost about 2.5 times the download and twice the wait, so a bigger model was not the answer.</p>
+
+      <p class="sub">What fixed it</p>
+      <p class="intro-p" style="margin-bottom:0">I kept the 3B model and moved the fragile jobs into code: one combined course tool, date ranges worked out by simple arithmetic, a refusal screen that runs before the model, and course names read from the student's own words. After that, the 3B model scored 1.0 on all 17 conversations. The problem was how I steered the model, not how big it was.</p>
+    </div>
+  </section>
+
+  <!-- ================= DECISIONS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Decisions</p>
+      <h2>The choices that shaped it</h2>
       <ul class="outline">
-      <li><b>Problem</b><span>What I was trying to solve and for whom.</span></li>
-      <li><b>Approach and architecture</b><span>How the system works, with a diagram.</span></li>
-      <li><b>Tools and methods</b><span>The stack and why each piece was chosen.</span></li>
-      <li><b>Demo</b><span>Live site, screenshots, or a short recording.</span></li>
-      <li><b>Results</b><span>The measured numbers and how they were measured.</span></li>
-      <li><b>Challenges</b><span>What broke and how I fixed it.</span></li>
-      <li><b>How I verified the AI's work</b><span>Evaluation, judges, guardrails.</span></li>
-      <li><b>What I would improve</b><span>Limits and next steps.</span></li>
+        <li><b>Keep the model on a short leash</b><span>Only one step calls the model. Code handles the course, the dates and the refusal, because those are the things a 3B model gets wrong.</span></li>
+        <li><b>Choose the model by testing it</b><span>I compared models on tool accuracy, speed and download size, using the same setup the agent uses. I did not pick by reputation.</span></li>
+        <li><b>Fix the steering before upgrading the model</b><span>The 7B model was not better, so I fixed the flow around the 3B instead. I also skipped fine tuning, since it needs labeled data and is fragile, and I skipped forcing JSON output, since the tests were already at 1.0.</span></li>
+        <li><b>Give the model one combined course tool</b><span>The tool <code>course_assignments</code> takes a course name and finds the course itself. That leaves no course ID for the model to invent and no lookup step for it to skip.</span></li>
+        <li><b>Let code decide the course and the dates</b><span>Code reads the course phrase from the student's own message and uses it in place of the model's guess. It also works out "today", "this week" and "next week", and drops any dates the model made up.</span></li>
+        <li><b>Refuse graded work in three layers</b><span>A pattern screen runs before the model. After a refusal, the conversation stays blocked for vague follow-ups. The system prompt covers phrasings the pattern misses.</span></li>
+        <li><b>Make read only a single check</b><span>The Canvas client uses plain httpx and raises an error on anything but a GET request. I chose it over a larger Canvas library so the safety rule sits in one place and is easy to test.</span></li>
+        <li><b>Search by keywords first</b><span>Pure embedding search failed. All the chunks in a course scored in a narrow band (about 0.35 to 0.40), so a chunk titled "Grade Breakdown" missed the top results for a grading question. Policy answers usually contain the question's own words, so keyword search leads and embeddings help with rephrased questions.</span></li>
+        <li><b>Give a link instead of guessing</b><span>When a syllabus is only a link to a Google Doc, the agent returns the link. It never opens outside documents, since the tool only navigates Canvas.</span></li>
+        <li><b>Index each course before it is used</b><span>Fetching and embedding content is slow, so I do it ahead of time. Each index records its version, so old indexes are rebuilt after a change to the search.</span></li>
       </ul>
     </div>
   </section>
+
+  <!-- ================= CHALLENGES ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Challenges</p>
+      <h2>What broke and how I fixed it</h2>
+      <ul class="outline">
+        <li><b>The model picked a course on its own</b><span>"Work in my AI class" became a search for one specific AI course, when the student had two. Now code reads the course phrase from the student's message, and if it matches more than one course, the agent asks the student to choose.</span></li>
+        <li><b>The model skipped steps or made up dates</b><span>It sometimes called a course tool with a half guessed name, or left out the date range. One extra "due today" filter it added even hid an assignment. The combined course tool and the date code removed both problems.</span></li>
+        <li><b>The refusal leaked when I reworded</b><span>It refused "do my homework" but not "walk me through the solution." I added the three layers and wrote about 30 phrasings that must be refused, plus about 18 normal questions that must not be.</span></li>
+        <li><b>The model counted the wrong courses</b><span>It treated "Data Science" as an AI course. For questions about the course list, I now give the model the roster directly, and the graph names the matching courses itself.</span></li>
+        <li><b>Lost track in long chats</b><span>It repeated earlier answers and drifted off the current course. The conversation memory keeps the last course, and the tool turn limit resets for each question.</span></li>
+        <li><b>Search results blurred together</b><span>Embedding search could not tell chunks apart. I made the chunks smaller (about 800 characters), added the prefixes the embedding model expects, switched to cosine distance, and led with keyword search.</span></li>
+        <li><b>Old indexes stayed behind</b><span>One search change shipped while old chunks stayed in place with no sign they were stale. Indexes now carry a version number so they rebuild on their own.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= HOW I VERIFIED THE AI'S WORK ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">How I verified the AI's work</p>
+      <h2>Checking the model, the guardrails and the answers</h2>
+      <ul class="outline">
+        <li><b>I tested at two levels</b><span>One test checks a single tool call. The other runs whole conversations. Single call results did not predict how the model behaves in a conversation, so I needed both.</span></li>
+        <li><b>I scored the steps as well as the answer</b><span>The 17 conversation tests score the order of tool calls, the structure of the answer and the refusals. A right answer reached the wrong way would not pass.</span></li>
+        <li><b>I fixed unclear tool descriptions</b><span>The only miss in the first test was a question about the courses a student takes this term. The cause was vague tool descriptions, and sharpening them fixed it.</span></li>
+        <li><b>I tested the refusal both ways</b><span>The refusal tests check that bad requests are caught and that normal ones, like "when is it due", are not blocked.</span></li>
+        <li><b>Read only is enforced in code</b><span>The client raises an error on any request that is not a GET, so the promise does not depend on the model behaving.</span></li>
+        <li><b>Answers link back to Canvas</b><span>Where an answer comes from a Canvas page, it includes the link, so the student can open the page and check it without trusting the model.</span></li>
+        <li><b>I re-run the tests after every change</b><span>One command (make eval) runs the conversation tests, and GitHub Actions runs the other tests on every push.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I WOULD IMPROVE ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">What I would improve</p>
+        <h2>Limits and next steps</h2>
+      </div>
+      <div class="prose">
+        <p>This is a personal navigation tool that I built to learn from. It has been tested only on limited sample data and is not a finished product.</p>
+        <p class="sub" style="margin-top:0">Known limits</p>
+        <ul>
+          <li>The tests are small: 12 single call cases and 17 conversations, all on sample Canvas data. A score of 1.0 does not guarantee the same result on new questions.</li>
+          <li>I built the fixes around failures the tests exposed, so the tests are likely to be optimistic.</li>
+          <li>I compared the 7B model before the fixes and did not test it again afterward.</li>
+          <li>The model sometimes swaps a vague course name for a specific one before the code sees it. The code usually catches this, but I do not have an end to end failure rate.</li>
+          <li>Policy answers need the course to be indexed first.</li>
+          <li>Questions about when a class meets only work if the time is written in the syllabus or a page. The agent does not use Canvas calendar events for this yet.</li>
+          <li>Content inside outside documents, like a Google Doc, is not read. The agent only gives the link.</li>
+          <li>Conversation memory is lost when the server stops, and the server supports one user.</li>
+        </ul>
+        <p class="sub">With more time</p>
+        <ul>
+          <li>Add tools that read straight from the Canvas API for questions like current grade, quiz score, late policy and quiz length. These need no search.</li>
+          <li>Fix the class schedule gap, with a tool that reads the Canvas calendar for one course, so "when does my class meet" works even if the time is not written in the syllabus.</li>
+          <li>Combine a number from the API with a fact from the syllabus, for questions like "how much do I need on the final to get an A".</li>
+          <li>Add new tools in batches and re-run the tests each time. The 3B model uses tools less reliably as their number grows, and it has six now.</li>
+          <li>Add more test conversations, including real questions from other students, and measure how well the search finds the right passage.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I LEARNED ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">What I learned</p>
+      <h2>Four things I will take into my next project</h2>
+      <ul class="outline">
+        <li><b>A bigger model is not always the answer.</b><span>The 7B model did not beat the 3B. Fixing how the model was steered did much more than upgrading it.</span></li>
+        <li><b>Let code handle what must be right.</b><span>Choosing the course, setting the dates and refusing graded work are too important to leave to a small model.</span></li>
+        <li><b>Test whole conversations, not just single calls.</b><span>A model can look fine on one tool call and still fall apart over a conversation.</span></li>
+        <li><b>Build safety into the system, not just the prompt.</b><span>Read only access and the refusal screen work because code enforces them, whatever the model does.</span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 <footer>
   <div class="wrap">
