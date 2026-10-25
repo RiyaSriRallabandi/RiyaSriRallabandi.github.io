@@ -4,11 +4,47 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CardTerms | Riya Sri Rallabandi</title>
+<meta name="description" content="CardTerms: question answering over 247 credit card agreements, a RAG project built around an evaluation harness.">
 <meta name="theme-color" content="#0a0d12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../assets/style.css">
+<!-- Small extra styles for this page only (results strip, tables, demo). Safe to move into style.css later. -->
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 18px 18px 16px; min-width: 0; }
+  .stat .num { display: block; font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; color: var(--signal); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat .cap { display: block; margin-top: 6px; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+  .intro-p { margin: 0 0 24px; max-width: 44em; color: var(--muted); }
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+  td.k { font-family: var(--font-mono); font-size: 13.5px; color: var(--accent); white-space: nowrap; }
+  td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--signal); white-space: nowrap; }
+  td.d { color: var(--muted); }
+  .sub { margin: 36px 0 4px; font-size: 1.1rem; font-weight: 600; }
+  .prose ul { margin: 0 0 18px; padding-left: 1.2em; max-width: 40em; }
+  .prose li { margin-bottom: 8px; }
+  .media { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .media video { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; object-fit: contain; }
+  .media .media-note { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  [hidden] { display: none !important; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  figure { margin: 0; min-width: 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .industry { margin: 0 0 20px; font-family: var(--font-mono); font-size: 13px; color: var(--signal); letter-spacing: 0.04em; }
+  /* Section names are the headline, the line under them is a quieter subtitle */
+  section .label { font-family: var(--font-body); font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight: 600; letter-spacing: -0.015em; text-transform: none; color: var(--accent); line-height: 1.2; margin: 0 0 10px; }
+  section h2 { font-size: clamp(1.05rem, 2vw, 1.25rem); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-bottom: 24px; }
+  .two-col h2 { margin-bottom: 0; }
+  .outline li { line-height: 1.55; }
+  .outline li b { margin-bottom: 2px; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 <header class="bar">
@@ -23,27 +59,289 @@
   </div>
 </header>
 <main>
+
+  <!-- ================= TITLE ================= -->
   <div class="wrap hero">
     <p class="crumb"><a href="../projects.html">Projects</a> / cardterms</p>
     <p class="eyebrow">RAG · Retrieval · Evaluation</p>
     <h1>CardTerms</h1>
-    <div class="draft">PAGE NOT WRITTEN YET. We will fill this in together, one section at a time.</div>
+    <p class="industry">Industry: Finance / Banking</p>
+    <p class="lede">A question answering chatbot for 247 US credit card agreements. Every answer comes with the exact contract text it was drawn from, so the citation makes the answer easier to trust. I built it to learn how RAG works and how to evaluate whether it is working.</p>
+    <div class="links">
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/cardterms-rag" target="_blank" rel="noopener">GitHub Repo</a>
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/cardterms-rag/blob/main/REPORT.md" target="_blank" rel="noopener">Report</a>
+    </div>
   </div>
+
+  <!-- ================= RESULTS AT A GLANCE ================= -->
+  <section style="border-top:0; padding-top:0">
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><span class="num">82.9%</span><span class="cap">answered correctly end to end (63 of 76)</span></div>
+        <div class="stat"><span class="num">96.7%</span><span class="cap">correct document retrieved</span></div>
+        <div class="stat"><span class="num">82.0%</span><span class="cap">correct passage in the top 5, up from 57.4%</span></div>
+        <div class="stat"><span class="num">14 / 15</span><span class="cap">unanswerable questions correctly declined</span></div>
+        <div class="stat"><span class="num">$0</span><span class="cap">total cost to build and run</span></div>
+      </div>
+      <p class="note">Measured on 76 hand-written questions, 15 of which the contracts cannot answer.</p>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEM ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">Problem</p>
+        <h2>Finding one number in near-identical contracts</h2>
+      </div>
+      <div class="prose">
+        <p>Picture a customer support agent who needs the annual fee for one specific card. There are hundreds of credit card agreements, each dozens of pages long. Finding the number by hand means opening the right document and hunting through it.</p>
+        <p>The hard part is that the agreements are nearly the same. Issuers file from a shared template, so two documents can differ only by the brand name and a few numbers. A system that finds "a credit card agreement" is no help. It has to find the right one, then the right passage inside it.</p>
+        <p>I set four requirements:</p>
+        <ul>
+          <li>Find the right document.</li>
+          <li>Find the right passage in it.</li>
+          <li>Say "I can't answer that" when the contracts do not contain the answer.</li>
+          <li>Always show the source text next to the answer.</li>
+        </ul>
+        <p>I also gave myself a constraint: build it end to end at zero cost, using local models where they are enough and free hosted models where they are not.</p>
+        <p>The data is the CFPB's Credit Card Agreement Database from the Q1 2026 release: 247 agreements from 46 issuers, 2,722 pages in total. I pinned it to one quarter so my answer labels would stay valid.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPROACH AND ARCHITECTURE ================= -->
   <section>
     <div class="wrap">
-      <p class="label">Planned sections</p>
+      <p class="label">Approach and architecture</p>
+      <h2>Measure, improve, repeat</h2>
+      <p class="intro-p">I treated this as a measurement project more than a modeling project. Before tuning anything, I wrote 76 test questions and marked the exact answer location in each contract. Then I improved the pipeline one stage at a time and kept a change only if the numbers said it helped.</p>
+      <svg viewBox="0 0 560 588" role="img" aria-label="Seven-stage pipeline from PDF parsing to a cited answer" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-width:640px;display:block;margin:0 auto">
+<rect x="0.5" y="0.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="23" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">1  Parse</text>
+<text x="16" y="43" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">247 PDFs to text: PyMuPDF, per-page OCR, cell-level tables</text>
+<path d="M280.0 59 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="76.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="99" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">2  Chunk</text>
+<text x="16" y="119" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">5,274 chunks of 512 tokens each</text>
+<path d="M280.0 135 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="152.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="175" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">3  Retrieve</text>
+<text x="16" y="195" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">BM25 keyword search, text plus product and issuer name: 50 candidates</text>
+<path d="M280.0 211 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="228.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="251" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">4  Rerank</text>
+<text x="16" y="271" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">bge-reranker-base cross-encoder re-scores the 50</text>
+<path d="M280.0 287 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="304.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="327" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">5  Select</text>
+<text x="16" y="347" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Reserve slots for every card named in the question: 5 passages</text>
+<path d="M280.0 363 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="380.5" width="559" height="55" rx="6" fill="#151b24" stroke="#5ec8d8"/>
+<text x="16" y="403" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">6  Gate (plain code)</text>
+<text x="16" y="423" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">No card named? Ask which one. The model is never called.</text>
+<path d="M280.0 439 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="456.5" width="559" height="55" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="479" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">7  Generate</text>
+<text x="16" y="499" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">gpt-oss-20b answers only from the 5 passages, cites them, or refuses</text>
+<path d="M280.0 515 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="532.5" width="559" height="55" rx="6" fill="#1b3a42" stroke="#5ec8d8"/>
+<text x="16" y="555" fill="#d9e0ea" font-family="JetBrains Mono, monospace" font-size="14">Answer</text>
+<text x="16" y="575" fill="#d9e0ea" font-family="IBM Plex Sans, sans-serif" font-size="13.5">With citations, shown beside the contract text it came from</text>
+</svg>
+      <p class="note" style="text-align:center">The "which card?" check is plain code. It uses a list of card and issuer names built from the corpus itself.</p>
+      <p class="intro-p" style="margin-top:28px">Early on, 20 of the 26 retrieval misses found the right document but the wrong passage. That told me to spend my effort on ranking passages, not on finding documents.</p>
+    </div>
+  </section>
+
+  <!-- ================= TOOLS AND METHODS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Tools and methods</p>
+      <h2>What I used and why</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Piece</th><th>What I used</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Parsing</td><td>PyMuPDF, per-page OCR, cell-level table extraction</td><td class="d">The contracts are PDFs full of tables. A fee and its amount have to stay together.</td></tr>
+            <tr><td class="k">Search</td><td>BM25 keyword search</td><td class="d">It beat three embedding models on this near-identical text.</td></tr>
+            <tr><td class="k">Reranking</td><td>bge-reranker-base (a cross-encoder)</td><td class="d">It reads the question and each passage together, so it judges relevance better than the first search can.</td></tr>
+            <tr><td class="k">Answering</td><td>gpt-oss-20b on Groq's free tier, with a local Llama 3.2 3B fallback through Ollama</td><td class="d">The hosted model is more accurate. The local one works offline.</td></tr>
+            <tr><td class="k">Judging</td><td>gpt-oss-120b as an LLM judge, checked against 30 hand-graded answers</td><td class="d">Whether an answer is right takes reading, not string matching.</td></tr>
+            <tr><td class="k">Storage</td><td>PostgreSQL with pgvector, in Docker</td><td class="d">Holds the documents, chunks, and labeled questions. Vector columns let me compare embedding models.</td></tr>
+            <tr><td class="k">Service</td><td>FastAPI and a single-page web client</td><td class="d">The whole pipeline sits behind one API. The page shows the answer beside its source.</td></tr>
+            <tr><td class="k">Statistics</td><td>McNemar and Wilcoxon tests, Cohen's kappa</td><td class="d">To check whether a gain was real or just noise.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Python 3.12 managed with uv. Docker Compose runs the database.</p>
+    </div>
+  </section>
+
+  <!-- ================= DEMO ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Demo</p>
+      <h2>Watching it work</h2>
+      <!-- Video: save your recording as assets/video/cardterms-demo.mp4 (60 to 90 seconds). -->
+      <div class="media">
+        <span class="media-note">Demo video coming soon</span>
+        <video controls preload="metadata" playsinline>
+          <source src="../assets/video/cardterms-demo.mp4" type="video/mp4" onerror="this.closest('video').hidden = true">
+        </video>
+      </div>
+      <div class="shots">
+        <figure>
+          <img src="../assets/img/cardterms/answer.png" alt="CardTerms answering the annual fee question for the OpenSky Gold card, with the source passage and the $59 amount highlighted" loading="lazy">
+          <figcaption>The answer appears beside the exact contract text it came from, with the amount highlighted.</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/img/cardterms/clarify.png" alt="CardTerms asking which card is meant when the question names none" loading="lazy">
+          <figcaption>A question that names no card never reaches the model. The app asks which card is meant.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Results</p>
+      <h2>What the measurements showed</h2>
+
+      <p class="sub" style="margin-top:0">How retrieval improved</p>
+      <p class="intro-p">Each row adds one change to the row above it. The score is hit@5: how often a correct passage appears in the top 5 results.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Configuration</th><th>hit@5</th></tr></thead>
+          <tbody>
+            <tr><td>BM25 keyword search, 512-token chunks (baseline)</td><td class="n">0.574</td></tr>
+            <tr><td class="d">For comparison: best embedding model (bge-small)</td><td class="n">0.541</td></tr>
+            <tr><td>Add the bge-reranker-base cross-encoder, pool of 50</td><td class="n">0.623</td></tr>
+            <tr><td>Show the reranker the product and issuer name too</td><td class="n">0.639</td></tr>
+            <tr><td>Add product and issuer name to the indexed text</td><td class="n">0.787</td></tr>
+            <tr><td>Add entity-aware selection (final)</td><td class="n">0.820</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="sub">Where the 13 misses came from</p>
+      <p class="intro-p">Of 76 questions, 63 were handled correctly: 49 answered right and 14 unanswerable ones correctly declined. I sorted the other 13 by the part of the system that would have to change.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>What happened</th><th>Count</th></tr></thead>
+          <tbody>
+            <tr><td>Refused because the evidence was incomplete (a defensible call)</td><td class="n">5</td></tr>
+            <tr><td>Wrong: the right passage was found but not in the top 5</td><td class="n">2</td></tr>
+            <tr><td>Wrong: answered with incomplete evidence</td><td class="n">1</td></tr>
+            <tr><td>Refused even though the evidence was complete</td><td class="n">1</td></tr>
+            <tr><td>Wrong: evidence was complete, the model misread it</td><td class="n">3</td></tr>
+            <tr><td>Answered a question the contracts cannot answer</td><td class="n">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">That is 8 misses caused by retrieval and 5 by generation. Every time I fixed one stage, a different stage became the weakest. A single accuracy number could not show me that, so I tracked each stage separately.</p>
+
+      <p class="sub">Where the time goes</p>
+      <p class="intro-p">The median response is 7.7 seconds. The language model is only about 9% of that. The cross-encoder reranker is about 90%, because it reads roughly 25,000 tokens per question on a laptop GPU.</p>
+    </div>
+  </section>
+
+  <!-- ================= DECISIONS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Decisions</p>
+      <h2>The choices that shaped it</h2>
       <ul class="outline">
-      <li><b>Problem</b><span>What I was trying to solve and for whom.</span></li>
-      <li><b>Approach and architecture</b><span>How the system works, with a diagram.</span></li>
-      <li><b>Tools and methods</b><span>The stack and why each piece was chosen.</span></li>
-      <li><b>Demo</b><span>Live site, screenshots, or a short recording.</span></li>
-      <li><b>Results</b><span>The measured numbers and how they were measured.</span></li>
-      <li><b>Challenges</b><span>What broke and how I fixed it.</span></li>
-      <li><b>How I verified the AI's work</b><span>Evaluation, judges, guardrails.</span></li>
-      <li><b>What I would improve</b><span>Limits and next steps.</span></li>
+        <li><b>Build the test set before tuning anything</b><span>I stored the correct answer as a character span in the contract, not as a chunk ID. Chunk IDs change every time I change the chunking, but spans do not, so one test set could score all nine chunking strategies. The loader also rejected any quote that was missing from its document or appeared more than once. That caught 13 bad labels that would have quietly dragged down every recall number.</span></li>
+        <li><b>Use keyword search, not embeddings</b><span>I compared BM25 with three embedding models. BM25 won (0.574 against 0.541, 0.492 and 0.410). The contracts are near-identical legal text, and questions turn on exact product names and dollar amounts, which keyword search handles well. The larger bge-base model scored worse than the smaller bge-small.</span></li>
+        <li><b>Put the card name inside every chunk</b><span>Many chunks were bare table rows like "Annual Fee | $89" that name no card. Adding the product and issuer name to the indexed text raised hit@5 from 0.639 to 0.787, and it improved the candidate pool itself, not just the ordering.</span></li>
+        <li><b>Let the numbers choose what to build next</b><span>Before building hybrid search, I checked the ceiling: an oracle that picked the better method per question reached only 0.623 against 0.574, so I dropped it. Metadata filtering could help at most 6 of 26 failures, so I dropped that too. Reranking looked best, because 46 of 61 answers were already inside the top 50 but ranked too low.</span></li>
+        <li><b>Test the reranker before trusting it</b><span>One popular reranker (ms-marco) made results 8 points worse, and bge-reranker-base made them about 5 points better. A pool of 100 candidates did worse than a pool of 50, since more candidates gave the reranker more chances to promote a wrong one.</span></li>
+        <li><b>Reserve context slots for every card named</b><span>Comparison questions mention two cards, but the top 5 often came from only one. Simple caps on passages per document did not help (they moved evidence between categories without creating any). Entity-aware selection did: it reserves slots for each named card and left single-card questions untouched.</span></li>
+        <li><b>Move the "which card?" decision out of the prompt and into code</b><span>I tried two prompt rewrites, and rejected both. One made the model count cards by reading the retrieved passages instead of the question, and ambiguous questions got worse. A short piece of code that checks which cards the question names fixed it, taking ambiguous questions from 1 of 5 to 5 of 5.</span></li>
+        <li><b>Change the generator, not the prompt</b><span>On 11 known grounding failures with the same prompt and retrieval, a local 3B model fixed 0, an 8B model fixed 8, and a 70B model fixed 9. I picked the 8B because it was the largest model I could fully test within the free tier's daily limit.</span></li>
+      </ul>
+      <p class="sub">Tried and dropped</p>
+      <p class="intro-p" style="margin-bottom:0">Hybrid keyword plus embedding search, metadata filtering, an approximate vector index (it saved about 12 ms on a request that takes seconds, and made runs harder to compare), per-document caps, two prompt rewrites, bge-base, 256-token chunks, and a candidate pool of 100. Each one was built or measured first, then dropped on evidence.</p>
+    </div>
+  </section>
+
+  <!-- ================= CHALLENGES ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Challenges</p>
+      <h2>What broke and how I fixed it</h2>
+      <p class="intro-p">Parsing bugs do not show an error. The text just looks fine while being wrong. After these, I added checks to every stage that fail the build when something is off.</p>
+      <ul class="outline">
+        <li><b>Table detection was deleting real text</b><span>PyMuPDF read indented lists and multi-column prose as sparse tables, then left them out of the body text. A fill-ratio threshold fixed it. For one issuer, detected tables dropped from 349 to 46.</span></li>
+        <li><b>Five documents extracted as meaningless text</b><span>Their embedded fonts had no character mapping, so extraction returned glyph codes. I caught it by counting common English words: affected files scored 0.0 to 0.8 per thousand characters, against 20 to 45 for normal ones. OCR recovered them. Left alone, they would have put about 90,000 characters of noise into the index.</span></li>
+        <li><b>Picking the largest file selected Spanish translations</b><span>Spanish versions are longer than the English originals, so every Bank of America filing I had chosen was Spanish only. That quietly removed a top-three issuer from an English system.</span></li>
+        <li><b>Chunking bugs that raised no errors</b><span>One strategy counted table text twice. Another had a 15% overlap setting that changed only 4 of 5,733 chunks, so it did nothing. I found both by verifying chunk output against the source.</span></li>
+        <li><b>The provider retired my models</b><span>All three Llama models were removed from the free tier after my experiments, and the app started returning 404 errors. Because I had an evaluation harness, requalifying a replacement took one command. I switched to gpt-oss-20b and re-ran all 76 questions. Retrieval came back identical to four decimals, which confirmed nothing else had drifted, and end-to-end accuracy rose from 73.7% to 82.9%.</span></li>
+        <li><b>Free-tier speed limitations</b><span>The hosted model allows about 1.3 questions per minute. I report that separately from latency, since it is a throughput cap and not a slow system.</span></li>
       </ul>
     </div>
   </section>
+
+  <!-- ================= HOW I VERIFIED THE AI'S WORK ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">How I verified the AI's work</p>
+      <h2>Checking that the numbers were true</h2>
+      <ul class="outline">
+        <li><b>A good metric was hiding a failure</b><span>hit@5 counts a question as answered once one relevant passage arrives. A question comparing two cards could score a full point while the model saw five passages about only one of them. I added a second metric, evidence coverage, which asks what share of the needed documents contributed a passage. Comparison questions scored 0.636 on hit@5 but only 0.409 on evidence coverage. After the fix, that rose to 0.614.</span></li>
+        <li><b>The shortcut check overstated accuracy</b><span>The shortcut was to check whether the expected figure appears anywhere in the answer. It reported 91%. But it cannot tell "the annual fee is $59" from "$59 is the cash advance fee." The calibrated judge reported 68%, so real accuracy was about 23 points lower than the shortcut said.</span></li>
+        <li><b>I calibrated the judge instead of trusting it</b><span>I graded 30 answers by hand, with the judge's verdicts hidden, then compared. Cohen's kappa was 0.929. I used kappa because on a set where most answers are correct, a judge that always says "correct" would score well on plain agreement and know nothing. The one disagreement was between neighboring categories, and in the lenient direction.</span></li>
+        <li><b>The judge cannot be the model being graded</b><span>My first judge was the generator itself, which tends to favor its own output. I moved to a larger, different model, and kappa against the same 30 labels rose from 0.871 to 0.929.</span></li>
+        <li><b>I audited my own answer key</b><span>The loader had verified every quote, but nothing had checked the reference answers written from those quotes. I checked all 76 and found two wrong, both claiming a clause the quote did not support.</span></li>
+        <li><b>Gains had to survive a significance test</b><span>Every retrieval gain was checked with paired tests. For example, reranking alone had McNemar p = 0.34 but Wilcoxon p = 0.031. The first test saw 10 questions change and the second saw 31. Reporting only one would have hidden a real effect.</span></li>
+        <li><b>Guardrails in the product itself</b><span>The model may answer only from the five passages, must cite them, and returns a refusal token when the answer is missing. It declined 14 of the 15 unanswerable questions. The interface always shows the source text, because 6 answers were wrong while still citing a passage.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I WOULD IMPROVE ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">What I would improve</p>
+        <h2>Limits and next steps</h2>
+      </div>
+      <div class="prose">
+        <p>This is a prototype for a support agent to search agreements quickly. It is not a tool to answer cardholders directly without review.</p>
+        <p class="sub" style="margin-top:0">Known limits</p>
+        <ul>
+          <li>Six answers are wrong while citing a passage, which is why the source text is always shown.</li>
+          <li>Comparison questions are still the weakest, at 61% evidence coverage.</li>
+          <li>A card that is not in the corpus can still get a confident wrong answer (the American Express Platinum question is one example).</li>
+          <li>The test set is small, and one filter threshold was tuned on the same 76 questions, so one p-value is optimistic.</li>
+          <li>The offline fallback runs at 69.7% accuracy and about 40 seconds per question.</li>
+        </ul>
+        <p class="sub">With more time, in this order</p>
+        <ul>
+          <li>Structured extraction of fee tables, since the remaining grounding failures read the wrong row of a table, mostly APR ranges and comparisons.</li>
+          <li>Reduce the candidate pool the reranker reads, for example from 50 to 25. I expect this to cut the response time by about half, since the reranker takes about 90% of it. I have not yet measured how much accuracy it would cost.</li>
+          <li>Count near-identical filings from one issuer as one piece of evidence. The metric currently counts three near-duplicate Bealls documents as three.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I LEARNED ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">What I learned</p>
+      <h2>Four things I will take into my next project</h2>
+      <ul class="outline">
+        <li><b>Look at each stage, not just the overall score.</b><span>A good overall number can hide a weak spot. When one metric could not show a problem, I added another one that could.</span></li>
+        <li><b>Do not rely on shortcuts to check answers.</b><span>A quick automatic check said 91% and the calibrated judge said 68%. Now I compare any automated grader against answers I graded by hand before I trust its number.</span></li>
+        <li><b>Prompt changes aren't always sufficient.</b><span>What actually helped was moving one decision into code and trying a different model.</span></li>
+        <li><b>Build an evaluation harness.</b><span>Having an evaluation harness makes it easy to replace a model when it gets retired.</span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 <footer>
   <div class="wrap">
