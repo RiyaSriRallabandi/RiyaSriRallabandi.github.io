@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects | Riya Sri Rallabandi</title>
+<meta name="theme-color" content="#0a0d12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="index.html">riya<span>.</span>sri<span>/</span>portfolio</a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="projects.html" aria-current="page">Projects</a>
+      <a href="other-work.html">Other work</a>
+      <a href="whats-next.html">What's next</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <p class="eyebrow">Projects</p>
+    <h1>What I've built</h1>
+    <p class="lede">Four AI systems built end to end. Open any project for the problem, the build, the results, and what I would improve.</p>
+  </div>
+
+  <section style="border-top:0; padding-top:0">
+    <div class="wrap">
+      <div class="projects">
+
+        <a class="card" href="projects/cardterms.html">
+          <span class="kind">RAG · Retrieval · Evaluation</span>
+          <h3>CardTerms</h3>
+          <p>Grounded question answering over 247 credit card agreements, with the source passage shown beside every answer.</p>
+          <div class="readout"><span class="num">82.9%</span><span class="cap">answered correctly end to end<br>retrieval hit@5 up from 57.4% to 82.0%</span></div>
+          <div class="stack"><span class="chip">BM25</span><span class="chip">Cross-encoder</span><span class="chip">pgvector</span><span class="chip">FastAPI</span></div>
+          <span class="go">Open project →</span>
+        </a>
+
+        <a class="card" href="projects/incident-triage-agent.html">
+          <span class="kind">Agents · LangGraph · MCP</span>
+          <h3>Incident Triage Agent</h3>
+          <p>A multi-step agent that investigates on-call incidents and returns a cited root cause, or escalates when evidence is thin.</p>
+          <div class="readout"><span class="num">88.9%</span><span class="cap">root cause correct on held-out set<br>0% false-confident-wrong</span></div>
+          <div class="stack"><span class="chip">LangGraph</span><span class="chip">Chroma</span><span class="chip">MCP</span><span class="chip">LangSmith</span></div>
+          <span class="go">Open project →</span>
+        </a>
+
+        <a class="card" href="projects/canvas-copilot.html">
+          <span class="kind">Local LLM · Agent · Hybrid search</span>
+          <h3>Canvas Copilot</h3>
+          <p>A local-first assistant that answers Canvas course-logistics questions with a read-only API client and an on-device model.</p>
+          <div class="readout"><span class="num">3B</span><span class="cap">on-device model, read-only access<br>graded-work refusal guardrail</span></div>
+          <div class="stack"><span class="chip">LangGraph</span><span class="chip">Ollama</span><span class="chip">Qwen2.5</span><span class="chip">SQLite</span></div>
+          <span class="go">Open project →</span>
+        </a>
+
+        <a class="card" href="projects/typescape.html">
+          <span class="kind">Multi-agent · Decision support</span>
+          <h3>Typescape</h3>
+          <p>A hackathon tool that compares six housing types on a real Pittsburgh lot using five independent reviews and no single winner.</p>
+          <div class="readout"><span class="num">5 + 1</span><span class="cap">independent reviewers plus a Chair<br>weights applied with no LLM call</span></div>
+          <div class="stack"><span class="chip">Pydantic</span><span class="chip">FastAPI</span><span class="chip">Groq</span><span class="chip">Cursor</span></div>
+          <span class="go">Open project →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Riya Sri Rallabandi · rrallaba@andrew.cmu.edu</span>
+    <span class="mono"><a href="https://github.com/RiyaSriRallabandi" target="_blank" rel="noopener">github</a> · <a href="https://www.linkedin.com/in/riya-sri-rallabandi" target="_blank" rel="noopener">linkedin</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
