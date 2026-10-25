@@ -4,11 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Incident Triage Agent | Riya Sri Rallabandi</title>
+<meta name="description" content="Incident Triage Agent: an AI agent that investigates on-call incidents and returns a cited root cause or escalates, built around a careful evaluation harness.">
 <meta name="theme-color" content="#0a0d12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../assets/style.css">
+<!-- Small extra styles for this page only (results strip, tables, demo). Safe to move into style.css later. -->
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 18px 18px 16px; min-width: 0; }
+  .stat .num { display: block; font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; color: var(--signal); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat .cap { display: block; margin-top: 6px; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+  .intro-p { margin: 0 0 24px; max-width: 44em; color: var(--muted); }
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+  td.k { font-family: var(--font-mono); font-size: 13.5px; color: var(--accent); white-space: nowrap; }
+  td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--signal); white-space: nowrap; }
+  td.d { color: var(--muted); }
+  .sub { margin: 36px 0 4px; font-size: 1.1rem; font-weight: 600; }
+  .prose ul { margin: 0 0 18px; padding-left: 1.2em; max-width: 40em; }
+  .prose li { margin-bottom: 8px; }
+  .media { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .media video { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; object-fit: contain; }
+  .media .media-note { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  [hidden] { display: none !important; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  figure { margin: 0; min-width: 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .industry { margin: 0 0 20px; font-family: var(--font-mono); font-size: 13px; color: var(--signal); letter-spacing: 0.04em; }
+  /* Section names are the headline, the line under them is a quieter subtitle */
+  section .label { font-family: var(--font-body); font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight: 600; letter-spacing: -0.015em; text-transform: none; color: var(--accent); line-height: 1.2; margin: 0 0 10px; }
+  section h2 { font-size: clamp(1.05rem, 2vw, 1.25rem); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-bottom: 24px; }
+  .two-col h2 { margin-bottom: 0; }
+  .outline li { line-height: 1.55; }
+  .outline li b { margin-bottom: 2px; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+</style>
+
 </head>
 <body>
 <header class="bar">
@@ -23,27 +60,278 @@
   </div>
 </header>
 <main>
+
+  <!-- ================= TITLE ================= -->
   <div class="wrap hero">
     <p class="crumb"><a href="../projects.html">Projects</a> / incident-triage-agent</p>
-    <p class="eyebrow">Agents · LangGraph · MCP</p>
+    <p class="eyebrow">Agents · LangGraph · Evaluation</p>
     <h1>Incident Triage Agent</h1>
-    <div class="draft">PAGE NOT WRITTEN YET. We will fill this in together, one section at a time.</div>
+    <p class="industry">Industry: Software / IT Operations</p>
+    <p class="lede">An AI agent that investigates on-call incidents. It checks logs, metrics, recent deploys and runbooks, then gives a root cause with cited evidence, or escalates to a human when the evidence is not enough. I built it to learn how agents work and how LangGraph can be used to orchestrate them.</p>
+    <div class="links">
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/incident-triage-agent" target="_blank" rel="noopener">GitHub Repo</a>
+      <a class="btn" href="https://github.com/RiyaSriRallabandi/incident-triage-agent/blob/main/docs/REPORT.md" target="_blank" rel="noopener">Report</a>
+    </div>
   </div>
+
+  <!-- ================= RESULTS AT A GLANCE ================= -->
+  <section style="border-top:0; padding-top:0">
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><span class="num">88.9%</span><span class="cap">root cause correct (8 of 9 gradable scenarios)</span></div>
+        <div class="stat"><span class="num">10 / 10</span><span class="cap">escalate-or-answer decisions correct</span></div>
+        <div class="stat"><span class="num">0%</span><span class="cap">confident but wrong answers</span></div>
+        <div class="stat"><span class="num">100%</span><span class="cap">of delivered citations traced to real evidence</span></div>
+        <div class="stat"><span class="num">$0</span><span class="cap">total cost to build and run</span></div>
+      </div>
+      <p class="note">Measured on 10 held-out incidents. They were kept unseen during development and used only for the final test.</p>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEM ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">Problem</p>
+        <h2>The first hour of an incident is detective work</h2>
+      </div>
+      <div class="prose">
+        <p>Picture an engineer paged in the middle of the night. Before anyone can fix anything, someone has to investigate. That means searching logs, checking metrics, looking at what was deployed recently, and finding the right runbook. It is slow, repetitive work, and the engineer is tired.</p>
+        <p>I wanted an agent that does the investigation and hands over a clear answer. I set four requirements:</p>
+        <ul>
+          <li>Decide for itself what to check next.</li>
+          <li>Give a root cause that names the actual mechanism, with evidence quoted from what it found.</li>
+          <li>Explicitly decline and escalate to a human for review when it cannot find evidence that points to a cause.</li>
+          <li>Never take actions. It investigates only. It does not roll back, restart or change anything.</li>
+        </ul>
+        <p>My goal was to understand how to orchestrate an agent and how to evaluate it. So I kept the agent simple and put most of the effort into testing it.</p>
+        <p>I also kept to $0, so everything runs on free model tiers. The incident data is synthetic. Each of the 40 scenarios is based on a real public postmortem: 30 for developing and tuning, and 10 sealed away as a held-out test set.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPROACH AND ARCHITECTURE ================= -->
   <section>
     <div class="wrap">
-      <p class="label">Planned sections</p>
+      <p class="label">Approach and architecture</p>
+      <h2>A step by step flow for the agent, then measuring it and improving the flow</h2>
+      <p class="intro-p">The agent is a loop with three steps: plan, act, conclude. Only plan and conclude call a language model. Act is plain code that runs the tool the model picked. A budget of six tool calls keeps the loop from running forever.</p>
+      <svg viewBox="0 0 620 440" role="img" aria-label="Agent loop: plan, act, repeat up to six times, then conclude, verify citations and return an answer or escalation" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-width:680px;display:block;margin:0 auto">
+<rect x="0.5" y="0.5" width="559" height="49" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="23" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">Input</text>
+<text x="16" y="43" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">An incident report: what is broken and when</text>
+<path d="M280.0 53 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="70.5" width="559" height="69" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="93" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">1  Plan (LLM)</text>
+<text x="16" y="113" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Reads the report and the evidence so far.</text>
+<text x="16" y="133" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Picks the next tool, or decides it is ready to conclude.</text>
+<path d="M280.0 143 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="160.5" width="559" height="69" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="183" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">2  Act (plain code)</text>
+<text x="16" y="203" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Runs the chosen tool and adds the result to the evidence.</text>
+<text x="16" y="223" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Tools: search_logs, query_metrics, get_recent_deploys, retrieve_runbook</text>
+<path d="M280.0 233 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="250.5" width="559" height="49" rx="6" fill="#10151c" stroke="#222b37"/>
+<text x="16" y="273" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">3  Conclude (LLM)</text>
+<text x="16" y="293" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Gives a root cause, confidence and fix, or escalates to a human.</text>
+<path d="M280.0 303 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="320.5" width="559" height="49" rx="6" fill="#151b24" stroke="#5ec8d8"/>
+<text x="16" y="343" fill="#5ec8d8" font-family="JetBrains Mono, monospace" font-size="14">4  Verify citations (plain code)</text>
+<text x="16" y="363" fill="#8592a5" font-family="IBM Plex Sans, sans-serif" font-size="13.5">Removes any citation that cannot be found in the evidence.</text>
+<path d="M280.0 373 v11 m-5 -5 l5 5 l5 -5" fill="none" stroke="#5ec8d8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0.5" y="390.5" width="559" height="49" rx="6" fill="#1b3a42" stroke="#5ec8d8"/>
+<text x="16" y="413" fill="#d9e0ea" font-family="JetBrains Mono, monospace" font-size="14">Output</text>
+<text x="16" y="433" fill="#d9e0ea" font-family="IBM Plex Sans, sans-serif" font-size="13.5">A cited root cause, or an escalation with the reason and next steps</text>
+<path d="M560 184 h34 V94 h-30 m6 -5 l-6 5 l6 5" fill="none" stroke="#e8b86a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text transform="translate(610,139.0) rotate(90)" text-anchor="middle" fill="#e8b86a" font-family="JetBrains Mono, monospace" font-size="11.5">repeat, up to 6 tool calls</text>
+</svg>
+      <p class="note" style="text-align:center">Tool errors are added to the evidence instead of crashing the run, so the agent can reason about them.</p>
+      <p class="intro-p" style="margin-top:28px">Around the agent is an evaluation harness. It runs each scenario, grades the answers with a calibrated judge, scores the steps the agent took, and compares changes with paired statistical tests. I changed one thing at a time and kept a change only if the numbers supported it.</p>
+    </div>
+  </section>
+
+  <!-- ================= TOOLS AND METHODS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Tools and methods</p>
+      <h2>What I used and why</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Piece</th><th>What I used</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Agent loop</td><td>LangGraph</td><td class="d">It makes the plan, act and conclude steps an explicit state machine that I can follow and test.</td></tr>
+            <tr><td class="k">Investigation tools</td><td>search_logs, query_metrics, get_recent_deploys, retrieve_runbook</td><td class="d">These are the same four things an on-call engineer checks first.</td></tr>
+            <tr><td class="k">Runbook search</td><td>Chroma with all-MiniLM-L6-v2 embeddings</td><td class="d">A small local RAG setup over hand-written runbooks, with no API cost.</td></tr>
+            <tr><td class="k">Agent models</td><td>Gemini 3.5 Flash Lite, with Groq gpt-oss-20b as a fallback</td><td class="d">Both have free tiers, which kept the project at $0.</td></tr>
+            <tr><td class="k">Judge</td><td>Groq gpt-oss-120b</td><td class="d">Root causes are free text, so a model has to read them to grade them.</td></tr>
+            <tr><td class="k">Tool access (MCP)</td><td>An MCP server for the same four tools</td><td class="d">It lets other clients, such as Claude Desktop, use the investigation tools. The agent itself calls the tools directly in Python.</td></tr>            <tr><td class="k">Tracing</td><td>LangSmith</td><td class="d">Each step is recorded and tagged by scenario, so I can see exactly where a run went wrong.</td></tr>
+            <tr><td class="k">Statistics</td><td>scikit-learn, SciPy</td><td class="d">Cohen's kappa for the judge, McNemar and Wilcoxon tests for comparing versions.</td></tr>
+            <tr><td class="k">Quality checks</td><td>pytest (272 tests), GitHub Actions, uv, ruff</td><td class="d">Tests run automatically on every push.</td></tr>
+            <tr><td class="k">Demo</td><td>FastAPI on Render's free tier</td><td class="d">It replays saved runs, so the demo needs no model calls.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEMO ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Demo</p>
+      <h2>Watching it work</h2>
+      <!-- Screenshots: save as assets/img/incident-triage/diagnosis.png, trace.png and escalation.png.
+           Any figure whose image is missing hides itself, so the page never shows a broken icon. -->
+      <div class="links" style="margin-top:24px">
+        <a class="btn" href="https://incident-triage-agent-fkni.onrender.com" target="_blank" rel="noopener">Open the demo of saved runs</a>
+      </div>
+      <p class="note">The demo replays recorded investigations and makes no live model calls. It runs on a free server, so the first load can take about 50 seconds.</p>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Results</p>
+      <h2>What the measurements showed</h2>
+
+      <p class="sub" style="margin-top:0">Held-out set against dev set</p>
+      <p class="intro-p">I tuned the agent on the 30 dev scenarios. Then I froze it and ran the 10 held-out scenarios exactly once.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Metric</th><th>Held-out (10)</th><th>Dev (30)</th></tr></thead>
+          <tbody>
+            <tr><td>Root cause correct (names the mechanism)</td><td class="n">88.9%</td><td class="n">74.1%</td></tr>
+            <tr><td>Root cause partly right</td><td class="n">11.1%</td><td class="n">22.2%</td></tr>
+            <tr><td>Root cause wrong</td><td class="n">0%</td><td class="n">3.7%</td></tr>
+            <tr><td>Right call on answer or escalate</td><td class="n">100%</td><td class="n">93.3%</td></tr>
+            <tr><td>Confident but wrong</td><td class="n">0%</td><td class="n">3.3%</td></tr>
+            <tr><td>Citations the agent wrote that were real</td><td class="n">58.1%</td><td class="n">57.3%</td></tr>
+            <tr><td>Average tool calls per run</td><td class="n">3.9</td><td class="n">4.13</td></tr>
+            <tr><td>Runs that hit the six call limit</td><td class="n">0%</td><td class="n">20%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The held-out score is higher than the dev score, so I found no sign that I had overfit to the dev set. With only 9 gradable scenarios, one more or one fewer correct answer changes the score by about 11 points. So I treat 88.9% as a rough estimate.</p>
+
+      <p class="sub">Every prompt change I tried was rejected</p>
+      <p class="intro-p">The first agent made up about 43% of its citations. I tried rewriting the final prompt three ways to fix that, and I also tested removing the deploy tool. Each row compares one change to the baseline on the same 30 dev scenarios.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Change</th><th>What got better</th><th>What got worse</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr><td class="k">conclude-v2<br>Demand the mechanism, cite only retrieved text</td><td class="d">Real citations 57.3% to 89.0%</td><td class="d">Right escalation calls 93.3% to 80.0%. Six solvable incidents were escalated, up from two.</td><td class="d">Rejected</td></tr>
+            <tr><td class="k">conclude-v3<br>Soften the escalation rule</td><td class="d">Real citations 57.3% to 76.8%. Escalation back to 93.3%.</td><td class="d">Root cause correct 74.1% to 59.3%. Answers got vaguer.</td><td class="d">Rejected</td></tr>
+            <tr><td class="k">conclude-v4<br>Only add "quote the evidence word for word"</td><td class="d">On dev: citations 96.9%, root cause correct 80.8%</td><td class="d">On held-out: root cause correct 88.9% to 50.0%</td><td class="d">Rejected</td></tr>
+            <tr><td class="k">no-deploys<br>Remove the deploy history tool</td><td class="d">Slightly fewer tool calls</td><td class="d">Root cause correct 74.1% to 62.5%</td><td class="d">Kept the tool</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">With 30 scenarios, I treat the p-values as supporting evidence and rely more on the size of each change and on reading the failed runs myself.</p>
+
+      <p class="sub">The held-out set kept me from being misled by the results</p>
+      <p class="intro-p" style="margin-bottom:0">On the dev set, conclude-v4 looked like a clear win. On the held-out set, it dropped root cause accuracy from 88.9% to 50%. Telling the agent to quote evidence word for word made it grab one log line instead of putting several clues together. On a traffic routing incident it described the symptom, not why the broken version got all of the traffic. The dev set has more incidents where one log line gives the answer, and the held-out set has more that need several pieces combined. Without the held-out set, I would have shipped a worse agent.</p>
+
+      <p class="sub">Where it still struggles</p>
+      <p class="intro-p" style="margin-bottom:0">Most partial answers come from incidents where the real cause sits behind another cause. The agent stops at "this was slow and it broke that." For example, on the one partial held-out case it said "an unoptimized query" when the real cause was that the working set had outgrown the buffer cache.</p>
+    </div>
+  </section>
+
+  <!-- ================= DECISIONS ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Decisions</p>
+      <h2>The choices that shaped it</h2>
       <ul class="outline">
-      <li><b>Problem</b><span>What I was trying to solve and for whom.</span></li>
-      <li><b>Approach and architecture</b><span>How the system works, with a diagram.</span></li>
-      <li><b>Tools and methods</b><span>The stack and why each piece was chosen.</span></li>
-      <li><b>Demo</b><span>Live site, screenshots, or a short recording.</span></li>
-      <li><b>Results</b><span>The measured numbers and how they were measured.</span></li>
-      <li><b>Challenges</b><span>What broke and how I fixed it.</span></li>
-      <li><b>How I verified the AI's work</b><span>Evaluation, judges, guardrails.</span></li>
-      <li><b>What I would improve</b><span>Limits and next steps.</span></li>
+        <li><b>Start with a simple agent and evaluate it thoroughly</b><span>A complicated agent is hard to measure. A simple plan, act, conclude loop gave me a clear baseline, so I could judge every later change against it.</span></li>
+        <li><b>Use a model only where judgment is needed</b><span>Only plan and conclude call the model, and both return structured output, so the loop never has to parse free text. Running the tools is plain code. That makes each step easier to test and debug.</span></li>
+        <li><b>Cap the loop at six tool calls</b><span>A budget keeps cost bounded and forces the agent to decide. When the budget runs out, the agent has to conclude with what it has.</span></li>
+        <li><b>Human escalation is better than a confident wrong answer</b><span>An on-call engineer is better served by an escalation to a human than by a confident wrong guess. So I measure the escalation decision, and I track a confident but wrong rate that I want to be zero. It was 0% on the held-out set.</span></li>
+        <li><b>Grade the mechanism, not just the symptom</b><span>My first judge accepted any answer that named the right service. That is not enough to fix an incident. The second judge requires the actual mechanism, such as "the dedup set holds 14 million entries and never evicts."</span></li>
+        <li><b>Change one thing at a time and compare on the same scenarios</b><span>Each experiment changed a single piece, such as one prompt or one tool. Running the same scenarios for both versions meant any difference came from that change.</span></li>
+        <li><b>Do not tune on the held-out set</b><span>I never tuned on the 10 held-out scenarios. This avoids overfitting and gives a reliable way to check how the agent performs on unseen data. It is how I caught that conclude-v4 was a bad change.</span></li>
+        <li><b>Fix citations in code, not in the prompt</b><span>Three prompt rewrites each traded one problem for another. So I added a plain code check that removes any citation that cannot be found in the evidence. It does not make the agent cite better. It makes every delivered citation real, and it logs how many were removed so the fabrication stays visible.</span></li>
+        <li><b>Demo from saved runs</b><span>An investigation is slow and uses free quota. The demo replays recorded runs, which makes it fast and repeatable, and it exposes nothing sensitive because all the data is synthetic.</span></li>
       </ul>
     </div>
   </section>
+
+  <!-- ================= CHALLENGES ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">Challenges</p>
+      <h2>What broke and how I fixed it</h2>
+      <ul class="outline">
+        <li><b>Free tier limits</b><span>The full set of experiments did not fit inside one day of free quota (about 200K tokens a day on Groq and about 500 requests a day on Gemini). I cached every run by experiment name, so a rerun only does the missing work, and I let the experiments stretch across several days. Runs that failed from a rate limit are retried automatically.</span></li>
+        <li><b>Messy model output</b><span>The Groq open source models sometimes returned malformed structured output. I added retries so one bad response does not ruin a run.</span></li>
+        <li><b>A judge that was too easy</b><span>My first judge agreed with a stronger reviewer only a little more than chance (kappa 0.25). It passed answers that named the right service but missed the mechanism. I rewrote it to require the mechanism, and agreement rose to 0.92.</span></li>
+        <li><b>Made up citations</b><span>Around 43% of the citations the agent wrote could not be found in its own evidence. Prompt fixes helped, but each one caused a new problem, so I moved the fix into code.</span></li>
+        <li><b>Over-escalating</b><span>The first citation fix told the agent to escalate if it could not name the mechanism. It then escalated six solvable incidents, up from two. Softening that rule fixed escalation but made the root causes vaguer.</span></li>
+        <li><b>A win that was not real</b><span>The dev set said conclude-v4 was better. Only the held-out set showed it was worse.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= HOW I VERIFIED THE AI'S WORK ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">How I verified the AI's work</p>
+      <h2>Checking the agent, the judge and the answer key</h2>
+      <ul class="outline">
+        <li><b>I scored the process, not only the answer</b><span>For each run I measured the outcome (was the conclusion right?) and the steps (were the citations real, how many tools were used, did it hit the limit?). When the outcome was wrong, I could see which stage caused it.</span></li>
+        <li><b>I checked the judge against a stronger reviewer</b><span>A stronger model, Claude Sonnet, reviewed 30 runs, and I compared its grades with the judge's. The first judge prompt scored kappa 0.25 and was rejected. The second scored 0.92 and agreed on 29 of 30 runs. The one disagreement was "external DNS provider failure" against "DDoS." One caution: the second prompt includes worked examples from some of the same scenarios, so it may be slightly anchored to them.</span></li>
+        <li><b>I checked the answer key</b><span>Claude Sonnet drafted the correct answer for each scenario from a real public postmortem. I then reviewed every one, and an automated rubric reviewer checked them too.</span></li>
+        <li><b>I read the runs that got worse</b><span>When a change lowered a score, I opened the scenarios behind it. For example, on a memory leak incident the baseline named the cause (the dedup set holding 14 million entries with no eviction), but conclude-v3 gave a vaguer and slightly wrong answer about queue depth tracking.</span></li>
+        <li><b>I sorted failures by stage</b><span>After I removed the deploy tool, the failures were tagged as missing tool calls or wrong tool arguments. That showed the agent was searching the logs for evidence that only the deploy history had.</span></li>
+        <li><b>Every citation is verified after the model finishes</b><span>A plain code check looks for each cited line in the evidence the agent gathered. If it is not there, the citation is dropped and the drop is logged. On both the dev and held-out sets, 100% of delivered citations are real.</span></li>
+        <li><b>I tested prompt injection</b><span>I added one malicious line to a log in five different ways: a direct instruction, a fake system message, a request for the prompt, an out of scope tool request, and an attempt to steal credentials. The agent passed all 5. It ignored the injected lines but did not flag them as suspicious.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I WOULD IMPROVE ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">What I would improve</p>
+        <h2>Limits and next steps</h2>
+      </div>
+      <div class="prose">
+        <p>This was an experimental learning project to understand how AI agents work and how to build and test them. It is not ready for a real on-call rotation.</p>
+        <p class="sub" style="margin-top:0">Known limits</p>
+        <ul>
+          <li>All the data is synthetic. Real logs are messier, with gaps, odd formats and clock differences.</li>
+          <li>Each scenario is a frozen snapshot, so the agent cannot query a live system or check back later.</li>
+          <li>It has only four tools. It cannot see tracing, config changes, feature flags or teammates.</li>
+          <li>The samples are small: 30 dev scenarios, 10 held-out, and 9 gradable. The results show a direction and are not proof.</li>
+          <li>The agent itself writes real citations only about 58% of the time. The 100% figure depends on the removal step, and it leaves about 1.8 citations per answer.</li>
+          <li>I tuned the prompts on the dev set, so the dev numbers are on the optimistic side.</li>
+          <li>The injection test had only five attacks, and the agent did not flag any of them.</li>
+        </ul>
+        <p class="sub">With more time</p>
+        <ul>
+          <li>Test on messier, more realistic logs and a larger set of scenarios, so the numbers are more reliable.</li>
+          <li>Teach the agent to cite correctly on its own, so the code check removes less.</li>
+          <li>Make the agent flag suspicious lines in the evidence, not just ignore them.</li>
+          <li>Add more tools, such as config diffs and feature flags, and see how much each one helps.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT I LEARNED ================= -->
+  <section>
+    <div class="wrap">
+      <p class="label">What I learned</p>
+      <h2>Four things I will take into my next project</h2>
+      <ul class="outline">
+        <li><b>Test on data that was not used for tuning.</b><span>A change that looks great on the data it was built on can fail on new data. The held-out set kept me from shipping a bad prompt.</span></li>
+        <li><b>Fixing one thing can break another.</b><span>Every citation fix hurt something else, like escalation or the quality of the root cause. Several metrics need to be monitored, not just the one being improved.</span></li>
+        <li><b>It is better for the agent to escalate than to give a confident wrong answer.</b><span>For an agent that people rely on, an honest escalation to a human is safer, so I measure it.</span></li>
+        <li><b>Some problems are better fixed in code than in the prompt.</b><span>Three prompt rewrites did not solve the citation problem. A small check in code did.</span></li>
+      </ul>
+    </div>
+  </section>
+
 </main>
 <footer>
   <div class="wrap">
