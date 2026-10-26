@@ -4,11 +4,47 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What's next | Riya Sri Rallabandi</title>
+<meta name="description" content="What I am working on next: an AI agent for career resources, and the Swarm Alignment Hackathon.">
 <meta name="theme-color" content="#0a0d12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/style.css">
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 18px 18px 16px; min-width: 0; }
+  .stat .num { display: block; font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; color: var(--signal); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat .cap { display: block; margin-top: 6px; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+  .intro-p { margin: 0 0 24px; max-width: 44em; color: var(--muted); }
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+  td.k { font-family: var(--font-mono); font-size: 13.5px; color: var(--accent); white-space: nowrap; }
+  td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--signal); white-space: nowrap; }
+  td.d { color: var(--muted); }
+  .sub { margin: 36px 0 4px; font-size: 1.1rem; font-weight: 600; }
+  .prose ul { margin: 0 0 18px; padding-left: 1.2em; max-width: 40em; }
+  .prose li { margin-bottom: 8px; }
+  .media { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .media video { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; object-fit: contain; }
+  .media .media-note { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  [hidden] { display: none !important; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  figure { margin: 0; min-width: 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .industry { margin: 0 0 20px; font-family: var(--font-mono); font-size: 13px; color: var(--signal); letter-spacing: 0.04em; }
+  /* Section names are the headline, the line under them is a quieter subtitle */
+  section .label { font-family: var(--font-body); font-size: clamp(1.6rem, 3.6vw, 2.1rem); font-weight: 600; letter-spacing: -0.015em; text-transform: none; color: var(--accent); line-height: 1.2; margin: 0 0 10px; }
+  section h2 { font-size: clamp(1.05rem, 2vw, 1.25rem); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-bottom: 24px; }
+  .two-col h2 { margin-bottom: 0; }
+  .outline li { line-height: 1.55; }
+  .outline li b { margin-bottom: 2px; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+</style>
+
 </head>
 <body>
 <header class="bar">
@@ -17,27 +53,50 @@
     <nav class="nav" aria-label="Main">
       <a href="index.html">Home</a>
       <a href="projects.html">Projects</a>
-      <a href="other-work.html">Other work</a>
       <a href="whats-next.html" aria-current="page">What's next</a>
     </nav>
   </div>
 </header>
 <main>
+
   <div class="wrap hero">
-    <p class="crumb"><a href="index.html">Home</a> / whats-next</p>
-    <p class="eyebrow">Upcoming projects</p>
+    <p class="eyebrow">What's next</p>
     <h1>What's next</h1>
-    <div class="draft">PAGE NOT WRITTEN YET. We will fill this in together, one section at a time.</div>
+    <p class="lede">Two things I am looking forward to: building an AI agent for career resources, and a hackathon about AI agent behavior.</p>
   </div>
+
+  <!-- ================= AI CAREER ASSISTANT ================= -->
   <section>
-    <div class="wrap">
-      <p class="label">Planned sections</p>
-      <ul class="outline">
-      <li><b>Upcoming projects</b><span>What I plan to build next.</span></li>
-      <li><b>What I would do differently</b><span>Lessons carried over from the four projects above.</span></li>
-      </ul>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">AI Career Assistant</p>
+        <h2>Planned</h2>
+      </div>
+      <div class="prose">
+        <p>I am planning to build an AI agent to help students at my college navigate through career resources more easily.</p>
+      </div>
     </div>
   </section>
+
+  <!-- ================= HACKATHON ================= -->
+  <section>
+    <div class="wrap two-col">
+      <div>
+        <p class="label">Swarm Alignment Hackathon</p>
+        <h2>Registered</h2>
+      </div>
+      <div class="prose">
+        <p>I am registered for the <a href="https://www.aialignmentfoundation.org/hackathons/swarm-alignment-2026" target="_blank" rel="noopener">Swarm Alignment Hackathon</a>. This topic really fascinates me. I have used AI agents in many projects, and this gives me an opportunity to learn more about their behavior and how I can potentially use them in a more effective manner.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p style="margin:0; font-size:clamp(1.3rem,3vw,1.7rem); font-weight:600; letter-spacing:-0.01em">I will continue exploring, building and learning....</p>
+    </div>
+  </section>
+
 </main>
 <footer>
   <div class="wrap">
